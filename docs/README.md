@@ -1,5 +1,5 @@
 # Overview 
-This project implements a lexer (scanner) in Python using the PLY (Python Lex-Yacc) library. The lexer reads input code, analyzes it, and converts it into tokens that can be used for further processing in a compiler.
+
 
 # Setting Up the Virtual Environment (venv)
 ## Step 1: Create a Virtual Environment
