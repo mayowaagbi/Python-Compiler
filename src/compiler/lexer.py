@@ -85,7 +85,7 @@ def test_lexer(data):
 
 # Example testing
 input_data = """
-x = 10 + 20;
+x = 10 + 20
 if (x > 15) {
     return x * 2;
 }
