@@ -156,7 +156,7 @@ x = 42
 if x > 10:
     print("Greater than 10")  // This is a comment
 """)
-        self.setWindowTitle("Code Editor with Combined Lexer")
+        self.setWindowTitle("Lexer Test")
         self.resize(800, 600)
         self.show()
 
