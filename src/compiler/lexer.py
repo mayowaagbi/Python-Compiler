@@ -13,9 +13,14 @@ tokens = (
     "GREATER", "COLON", 
     "SEMICOLON", "LBRACE", "RBRACE",  
     "COMMENT", "NEWLINE", "OPERATOR", 
-    "TRUE", "FALSE"  ,"KEYWORD"  
+    'AND', 'OR', 'NOT', 'RETURN', 'IF', 'ELSE', 
+    'WHILE', 'FOR', 'TYPE', 'INT', 'FLOAT', 
+    "TRUE", "FALSE", "KEYWORD", 
+    'LESS', 'GREATER_EQUAL', 'LESS_EQUAL',
+    'NOT_EQUAL', 'EQUAL_EQUAL',  "COMMA", "LBRACKET", "RBRACKET", 'DEF', 'CLASS', 'NEW',
 )
 
+# Regular expressions for tokens
 t_PLUS = r'\+'
 t_MINUS = r'-'
 t_TIMES = r'\*'
@@ -28,17 +33,51 @@ t_COLON = r':'
 t_SEMICOLON = r';'
 t_LBRACE = r'\{'
 t_RBRACE = r'\}'
+t_GREATER_EQUAL = r'>='
+t_LESS_EQUAL = r'<='
+t_NOT_EQUAL = r'!='
+t_EQUAL_EQUAL = r'=='
 t_OPERATOR = r'==|!=|<=|>=|&&|\|\|'  
+t_AND = r'and'
+t_OR = r'or'
+t_NOT = r'not'
+t_RETURN = r'return'
+t_IF = r'if'
+t_ELSE = r'else'
+t_WHILE = r'while'
+t_FOR = r'for'
+t_TYPE = r'type'
+t_INT = r'int'
+t_FLOAT = r'float'
+t_COMMA = r','
+t_LBRACKET = r'\['
+t_RBRACKET = r'\]'
+t_DEF = r'def'
+t_CLASS = r'class'
+t_NEW = r'new'
+
 
 # Identifier or reserved word (e.g., if, while)
 def t_ID(t):
     r'[a-zA-Z_][a-zA-Z_0-9]*'
     if t.value in keyword.kwlist:
-        t.type = 'KEYWORD'  # Classify as keyword
+        t.type = 'KEYWORD'
     elif t.value == "true":
-        t.type = "TRUE"  # Classify as boolean true
+        t.type = "TRUE"
+        t.value = True
     elif t.value == "false":
-        t.type = "FALSE"  # Classify as boolean false
+        t.type = "FALSE"
+        t.value = False
+    return t
+
+def t_TRUE(t):
+    r'true'
+    t.value = True
+    return t
+
+def t_FALSE(t):
+    r'false'
+    t.value = False
     return t
 
 # Number (e.g., 123)
@@ -151,10 +190,13 @@ class CodeEditor(QMainWindow):
         self.setCentralWidget(self.editor)
         self.lexer = CombinedLexer(self.editor)
         self.editor.setLexer(self.lexer)
-        self.editor.setText("""\
-x = 42
-if x > 10:
-    print("Greater than 10")  // This is a comment
+        self.editor.setText( """
+x = 5;
+if (x > 3) {
+    y = 10;
+} else {
+    y = 0;
+}
 """)
         self.setWindowTitle("Lexer Test")
         self.resize(800, 600)
