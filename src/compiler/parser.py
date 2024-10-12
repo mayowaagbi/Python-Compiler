@@ -1,6 +1,23 @@
 import ply.yacc as yacc
 from lexer import tokens
 
+# The ASTNode class
+class ASTNode:
+    def __init__(self, node_type, children=None, value=None):
+        self.node_type = node_type  # Type of node (like, 'assignment', 'if', 'expression')
+        self.children = children or []  # Child nodes
+        self.value = value  # Value for terminal nodes (constants or identifiers)
+        
+    def __repr__(self):
+        return f"ASTNode(type={self.node_type}, value={self.value})"
+
+    def pretty_print(self, level=0):
+        indent = '  ' * level  # Indentation based on the level of the node
+        result = f"{indent}ASTNode(type={self.node_type}, value={self.value})\n"
+        for child in self.children:
+            result += child.pretty_print(level + 1)
+        return result
+
 # Symbol table as a stack for handling scope
 symbol_stack = [{}]
 
@@ -24,28 +41,32 @@ def lookup_symbol(name):
     return None
 
 def execute_statement(statement):
-    if isinstance(statement, tuple):
-        statement_type = statement[0]
+    if isinstance(statement, ASTNode):
+        statement_type = statement.node_type
         print(f"Executing statement: {statement}")  # Log the current statement
         
-        if statement_type == 'assignment_statement':
-            _, var_name, value = statement
+        if statement_type == 'assignment':
+            var_name = statement.children[0].value
+            value = statement.children[1].value
             print(f"Assigning value {value} to variable '{var_name}'")  # Debug assignment
             assign_symbol(var_name, value)
 
         elif statement_type == 'if_statement':
-            _, condition, then_block, else_block = statement
+            condition = statement.children[0]
+            then_block = statement.children[1]
+            else_block = statement.children[2]
             condition_result = evaluate_expression(condition)
             if condition_result:
-                execute_block(then_block)
+                execute_block(then_block.children)
             else:
-                execute_block(else_block)
+                execute_block(else_block.children)
 
         elif statement_type == 'block':
-            execute_block(statement[1])
+            execute_block(statement.children)
 
         elif statement_type == 'function_call':
-            _, function_name, arguments = statement
+            function_name = statement.children[0].value
+            arguments = [child.value for child in statement.children[1:]]
             print(f"Calling function '{function_name}' with arguments {arguments}")  # Debug function call
             function_def = lookup_symbol(function_name)
             if function_def:
@@ -59,11 +80,11 @@ def execute_statement(statement):
                 print(f"Error: Function '{function_name}' is not defined")
 
         elif statement_type == 'return':
-            return_value = statement[1]
+            return_value = statement.children[0].value
             print(f"Returning value: {return_value}")  # Debug return statement
             return return_value
     else:
-        print(f"Error: Statement is not a tuple: {statement}")  # Log if the statement is not a tuple
+        print(f"Error: Statement is not an ASTNode: {statement}")  # Log if the statement is not an ASTNode
 
 def execute_block(block):
     for statement in block:
@@ -88,7 +109,7 @@ def instantiate_object(class_name):
 # Parsing rules
 def p_program(p):
     '''program : statement_list'''
-    p[0] = ('program', p[1])
+    p[0] = ASTNode('program', p[1])
 
 def p_statement_list(p):
     '''statement_list : statement
@@ -109,36 +130,36 @@ def p_statement(p):
 
 def p_assignment_statement(p):
     '''assignment_statement : ID EQUALS expression SEMICOLON'''
-    p[0] = ('assignment', p[1], p[3])
+    p[0] = ASTNode('assignment', [ASTNode('identifier', value=p[1]), p[3]])
 
 def p_if_statement(p):
-    '''if_statement : KEYWORD LPAREN expression RPAREN block_statement
-                    | KEYWORD LPAREN expression RPAREN block_statement KEYWORD block_statement'''
+    '''if_statement : IF LPAREN expression RPAREN block_statement
+                    | IF LPAREN expression RPAREN block_statement ELSE block_statement'''
     if len(p) == 6:
-        p[0] = ('if_statement', p[3], p[5], ('block', []))
+        p[0] = ASTNode('if_statement', [p[3], p[5], ASTNode('block', [])])
     else:
-        p[0] = ('if_statement', p[3], p[5], p[7])
+        p[0] = ASTNode('if_statement', [p[3], p[5], p[7]])
 
 def p_while_statement(p):
-    '''while_statement : KEYWORD LPAREN expression RPAREN block_statement'''
-    p[0] = ('while', p[3], p[5])
+    '''while_statement : WHILE LPAREN expression RPAREN block_statement'''
+    p[0] = ASTNode('while', [p[3], p[5]])
 
 def p_for_statement(p):
-    '''for_statement : KEYWORD LPAREN assignment_statement expression SEMICOLON assignment_statement RPAREN block_statement'''
-    p[0] = ('for', p[3], p[4], p[6], p[8])
+    '''for_statement : FOR LPAREN assignment_statement expression SEMICOLON assignment_statement RPAREN block_statement'''
+    p[0] = ASTNode('for', [p[3], p[4], p[6], p[8]])
 
 def p_return_statement(p):
-    '''return_statement : KEYWORD expression SEMICOLON
-                        | KEYWORD SEMICOLON'''
+    '''return_statement : RETURN expression SEMICOLON
+                        | RETURN SEMICOLON'''
     if len(p) == 3:
-        p[0] = ('return', None)
+        p[0] = ASTNode('return', [ASTNode('empty')])
     else:
-        p[0] = ('return', p[2])
+        p[0] = ASTNode('return', [p[2]])
 
 def p_block_statement(p):
     '''block_statement : LBRACE statement_list RBRACE
                        | LBRACE RBRACE'''
-    p[0] = ('block', p[2] if len(p) == 3 else [])
+    p[0] = ASTNode('block', p[2] if len(p) == 3 else [])
 
 def p_expression(p):
     '''expression : term
@@ -148,7 +169,7 @@ def p_expression(p):
     if len(p) == 2:
         p[0] = p[1]
     else:
-        p[0] = (p[2], p[1], p[3])
+        p[0] = ASTNode('binary_op', [p[1], p[3]], p[2])
 
 def p_comparison(p):
     '''comparison : term GREATER term
@@ -157,7 +178,25 @@ def p_comparison(p):
                   | term NOT_EQUAL term
                   | term GREATER_EQUAL term
                   | term LESS_EQUAL term'''
-    p[0] = ('comparison', p[1], p[2], p[3])
+    p[0] = ASTNode('comparison', [p[1], p[3]], p[2])
+
+def p_array_access(p):
+    '''array_access : ID LBRACKET expression RBRACKET'''
+    p[0] = ASTNode('array_access', value=p[1], children=[p[3]])  # Array name and index expression
+
+def p_unary_expression(p):
+    '''unary_expression : MINUS expression
+                        | NOT expression'''
+    p[0] = ASTNode('unary_op', value=p[1], children=[p[2]])  # Capture the operator and its operand
+
+def p_function_definition(p):
+    '''function_definition : DEF ID LPAREN parameter_list RPAREN block_statement'''
+    p[0] = ASTNode('function_def', value=p[2], children=[p[4], p[6]])  # Function name, parameters, and block
+
+def p_function_call(p):
+    '''function_call : ID LPAREN argument_list RPAREN'''
+    p[0] = ASTNode('function_call', value=p[1], children=p[3])  # Function name and argument list
+
 
 def p_term(p):
     '''term : factor
@@ -166,14 +205,17 @@ def p_term(p):
     if len(p) == 2:
         p[0] = p[1]
     else:
-        p[0] = (p[2], p[1], p[3])
+        p[0] = ASTNode('binary_op', [p[1], p[3]], p[2])
 
 def p_factor(p):
     '''factor : NUMBER
               | ID
               | LPAREN expression RPAREN'''
     if len(p) == 2:
-        p[0] = p[1]
+        if isinstance(p[1], int):
+            p[0] = ASTNode('number', value=p[1])
+        else:
+            p[0] = ASTNode('identifier', value=p[1])
     else:
         p[0] = p[2]
 

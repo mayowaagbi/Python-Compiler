@@ -1,4 +1,4 @@
-import keyword
+# import keyword
 import ply.lex as lex
 from PyQt5.Qsci import QsciLexerCustom, QsciScintilla
 from PyQt5.QtGui import QColor, QFont
@@ -12,12 +12,26 @@ tokens = (
     "GREATER", "COLON", 
     "SEMICOLON", "LBRACE", "RBRACE",  
     "COMMENT", "NEWLINE", "OPERATOR", 
-    'AND', 'OR', 'NOT', 'RETURN', 'IF', 'ELSE', 
-    'WHILE', 'FOR', 'TYPE', 'INT', 'FLOAT', 
-    "TRUE", "FALSE","KEYWORD",
+     'TYPE', 'INT', 'FLOAT',
     'LESS', 'GREATER_EQUAL', 'LESS_EQUAL',
     'NOT_EQUAL', 'EQUAL_EQUAL',  "COMMA", "LBRACKET", "RBRACKET", 'DEF', 'CLASS', 'NEW',
 )
+# Define keywords
+keywords = {
+    'if': 'IF',
+    'else': 'ELSE',
+    'while': 'WHILE',
+    'for': 'FOR',
+    'return': 'RETURN',
+    'true': 'TRUE',
+    'false': 'FALSE',
+    'and': 'AND',
+    'or': 'OR',
+    'not': 'NOT'
+}
+
+# Add keyword tokens to the list of tokens
+tokens += tuple(keywords.values())
 
 # Regular expressions for tokens
 t_PLUS = r'\+'
@@ -59,19 +73,26 @@ t_NEW = r'new'
 # Identifier or reserved word (e.g., if, while)
 def t_ID(t):
     r'[a-zA-Z_][a-zA-Z_0-9]*'
-    print(f"Token value: {t.value}")  # Debug: Print the token value
-    if t.value in keyword.kwlist:
-        t.type = 'KEYWORD'
-    elif t.value == "true":
-        t.type = "TRUE"
-        t.value = True
-    elif t.value == "false":
-        t.type = "FALSE"
-        t.value = False
-    else:
-        t.type = 'ID'  # Ensure a default type is set
+    t.type = keywords.get(t.value, 'ID')  # Check for reserved words
     print(f"Token type: {t.type}")  # Debug: Print the token type
     return t
+
+
+# def t_ID(t):
+#     r'[a-zA-Z_][a-zA-Z_0-9]*'
+#     print(f"Token value: {t.value}")  # Debug: Print the token value
+#     if t.value in keyword.kwlist:
+#         t.type = 'KEYWORD'
+#     elif t.value == "true":
+#         t.type = "TRUE"
+#         t.value = True
+#     elif t.value == "false":
+#         t.type = "FALSE"
+#         t.value = False
+#     else:
+#         t.type = 'ID'  # Ensure a default type is set
+#     print(f"Token type: {t.type}")  # Debug: Print the token type
+#     return t
 
 def t_TRUE(t):
     r'true'

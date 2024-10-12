@@ -25,7 +25,7 @@ def main():
 
     # Output the result of parsing
     print("\nResult of parsing:")
-    print(result)
+    print(result.pretty_print())
 
 if __name__ == "__main__":
     main()
