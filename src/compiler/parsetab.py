@@ -6,9 +6,9 @@ _tabversion = '3.10'
 
 _lr_method = 'LALR'
 
-_lr_signature = 'leftPLUSMINUSleftTIMESDIVIDEAND CLASS COLON COMMA COMMENT DEF DIVIDE ELSE EQUALS EQUAL_EQUAL FALSE FLOAT FOR GREATER GREATER_EQUAL ID IF INT KEYWORD LBRACE LBRACKET LESS LESS_EQUAL LPAREN MINUS NEW NEWLINE NOT NOT_EQUAL NUMBER OPERATOR OR PLUS RBRACE RBRACKET RETURN RPAREN SEMICOLON STRING TIMES TRUE TYPE WHILEempty :program : statement_liststatement_list : statement_list statement\n                      | statementstatement : assignment_statement\n                 | if_statement\n                 | while_statement\n                 | for_statement\n                 | function_definition\n                 | block_statement\n                 | return_statement\n                 | COMMENT\n                 | NEWLINEassignment_statement : ID EQUALS expression SEMICOLONfunction_definition : DEF ID LPAREN parameters RPAREN COLON block_statementparameters : parameter_list\n                  | emptyparameter_list : parameter_list COMMA ID\n                      | IDfunction_call : ID LPAREN argument_list RPARENargument_list : expression_list\n                     | emptyreturn_statement : RETURN expression SEMICOLONif_statement : IF LPAREN expression RPAREN block_statement ELSE block_statement\n                    | IF LPAREN expression RPAREN block_statementwhile_statement : WHILE LPAREN expression RPAREN block_statementfor_statement : FOR LPAREN assignment_statement SEMICOLON expression SEMICOLON assignment_statement RPAREN block_statementblock_statement : LBRACE statement_list RBRACE\n                       | emptyexpression : expression PLUS expression\n                  | expression MINUS expression\n                  | expression TIMES expression\n                  | expression DIVIDE expressionexpression : LPAREN expression RPARENexpression : NUMBERexpression : STRINGexpression : IDexpression_list : expression\n                       | expression COMMA expression_listvariable_declaration : TYPE ID EQUALS expression SEMICOLON\n                            | TYPE ID SEMICOLONarray_definition : ID EQUALS LBRACKET element_list RBRACKET SEMICOLONelement_list : element_list COMMA expression\n                    | expressionarray_access : ID LBRACKET expression RBRACKETclass_definition : CLASS ID LBRACE class_body RBRACEclass_body : class_member class_body\n                  | emptyclass_member : function_definition\n                    | variable_declaration'
+_lr_signature = 'AND CLASS COLON COMMA COMMENT DEF DIVIDE ELSE EQUALS EQUAL_EQUAL FALSE FLOAT FOR GREATER GREATER_EQUAL ID IF INT KEYWORD LBRACE LBRACKET LESS LESS_EQUAL LPAREN MINUS NEW NEWLINE NOT NOT_EQUAL NUMBER OPERATOR OR PLUS RBRACE RBRACKET RETURN RPAREN SEMICOLON STRING TIMES TRUE TYPE WHILEprogram : statement_liststatement_list : statement\n                      | statement_list statementstatement : assignment_statement\n                 | if_statement\n                 | while_statement\n                 | for_statement\n                 | return_statement\n                 | expression SEMICOLONassignment_statement : ID EQUALS expression SEMICOLONif_statement : KEYWORD LPAREN expression RPAREN block_statement\n                    | KEYWORD LPAREN expression RPAREN block_statement KEYWORD block_statementwhile_statement : KEYWORD LPAREN expression RPAREN block_statementfor_statement : KEYWORD LPAREN assignment_statement expression SEMICOLON assignment_statement RPAREN block_statementreturn_statement : KEYWORD expression SEMICOLON\n                        | KEYWORD SEMICOLONblock_statement : LBRACE statement_list RBRACE\n                       | LBRACE RBRACEexpression : term\n                  | expression PLUS term\n                  | expression MINUS term\n                  | comparisoncomparison : term GREATER term\n                  | term LESS term\n                  | term EQUAL_EQUAL term\n                  | term NOT_EQUAL term\n                  | term GREATER_EQUAL term\n                  | term LESS_EQUAL termterm : factor\n            | term TIMES factor\n            | term DIVIDE factorfactor : NUMBER\n              | ID\n              | LPAREN expression RPAREN'
     
-_lr_action_items = {'$end':([0,1,],[-1,0,]),}
+_lr_action_items = {'ID':([0,2,3,4,5,6,7,8,11,12,17,18,19,20,21,22,24,27,28,29,30,31,32,33,34,39,40,50,53,54,55,57,58,61,62,64,],[10,10,-2,-4,-5,-6,-7,-8,25,25,-3,-9,25,25,25,10,-16,25,25,25,25,25,25,25,25,25,-15,-10,-11,10,60,10,-18,-12,-17,-14,]),'KEYWORD':([0,2,3,4,5,6,7,8,17,18,24,40,50,53,54,57,58,61,62,64,],[11,11,-2,-4,-5,-6,-7,-8,-3,-9,-16,-15,-10,56,11,11,-18,-12,-17,-14,]),'NUMBER':([0,2,3,4,5,6,7,8,11,12,17,18,19,20,21,22,24,27,28,29,30,31,32,33,34,39,40,50,53,54,57,58,61,62,64,],[16,16,-2,-4,-5,-6,-7,-8,16,16,-3,-9,16,16,16,16,-16,16,16,16,16,16,16,16,16,16,-15,-10,-11,16,16,-18,-12,-17,-14,]),'LPAREN':([0,2,3,4,5,6,7,8,11,12,17,18,19,20,21,22,24,27,28,29,30,31,32,33,34,39,40,50,53,54,57,58,61,62,64,],[12,12,-2,-4,-5,-6,-7,-8,22,12,-3,-9,12,12,12,12,-16,12,12,12,12,12,12,12,12,12,-15,-10,-11,12,12,-18,-12,-17,-14,]),'$end':([1,2,3,4,5,6,7,8,17,18,24,40,50,53,58,61,62,64,],[0,-1,-2,-4,-5,-6,-7,-8,-3,-9,-16,-15,-10,-11,-18,-12,-17,-14,]),'RBRACE':([3,4,5,6,7,8,17,18,24,40,50,53,54,57,58,61,62,64,],[-2,-4,-5,-6,-7,-8,-3,-9,-16,-15,-10,-11,58,62,-18,-12,-17,-14,]),'SEMICOLON':([9,10,11,13,14,15,16,23,25,35,36,37,41,42,43,44,45,46,47,48,49,51,52,],[18,-33,24,-19,-22,-29,-32,40,-33,-20,-21,50,-34,-30,-31,-23,-24,-25,-26,-27,-28,-34,55,]),'PLUS':([9,10,13,14,15,16,23,25,26,35,36,37,38,41,42,43,44,45,46,47,48,49,51,52,],[19,-33,-19,-22,-29,-32,19,-33,19,-20,-21,19,19,-34,-30,-31,-23,-24,-25,-26,-27,-28,-34,19,]),'MINUS':([9,10,13,14,15,16,23,25,26,35,36,37,38,41,42,43,44,45,46,47,48,49,51,52,],[20,-33,-19,-22,-29,-32,20,-33,20,-20,-21,20,20,-34,-30,-31,-23,-24,-25,-26,-27,-28,-34,20,]),'EQUALS':([10,60,],[21,21,]),'TIMES':([10,13,15,16,25,35,36,41,42,43,44,45,46,47,48,49,51,],[-33,27,-29,-32,-33,27,27,-34,-30,-31,27,27,27,27,27,27,-34,]),'DIVIDE':([10,13,15,16,25,35,36,41,42,43,44,45,46,47,48,49,51,],[-33,28,-29,-32,-33,28,28,-34,-30,-31,28,28,28,28,28,28,-34,]),'GREATER':([10,13,15,16,25,41,42,43,51,],[-33,29,-29,-32,-33,-34,-30,-31,-34,]),'LESS':([10,13,15,16,25,41,42,43,51,],[-33,30,-29,-32,-33,-34,-30,-31,-34,]),'EQUAL_EQUAL':([10,13,15,16,25,41,42,43,51,],[-33,31,-29,-32,-33,-34,-30,-31,-34,]),'NOT_EQUAL':([10,13,15,16,25,41,42,43,51,],[-33,32,-29,-32,-33,-34,-30,-31,-34,]),'GREATER_EQUAL':([10,13,15,16,25,41,42,43,51,],[-33,33,-29,-32,-33,-34,-30,-31,-34,]),'LESS_EQUAL':([10,13,15,16,25,41,42,43,51,],[-33,34,-29,-32,-33,-34,-30,-31,-34,]),'RPAREN':([10,13,14,15,16,25,26,35,36,38,41,42,43,44,45,46,47,48,49,50,59,],[-33,-19,-22,-29,-32,-33,41,-20,-21,51,-34,-30,-31,-23,-24,-25,-26,-27,-28,-10,63,]),'LBRACE':([51,56,63,],[54,54,54,]),}
 
 _lr_action = {}
 for _k, _v in _lr_action_items.items():
@@ -17,7 +17,7 @@ for _k, _v in _lr_action_items.items():
       _lr_action[_x][_k] = _y
 del _lr_action_items
 
-_lr_goto_items = {'empty':([0,],[1,]),}
+_lr_goto_items = {'program':([0,],[1,]),'statement_list':([0,54,],[2,57,]),'statement':([0,2,54,57,],[3,17,3,17,]),'assignment_statement':([0,2,22,54,55,57,],[4,4,39,4,59,4,]),'if_statement':([0,2,54,57,],[5,5,5,5,]),'while_statement':([0,2,54,57,],[6,6,6,6,]),'for_statement':([0,2,54,57,],[7,7,7,7,]),'return_statement':([0,2,54,57,],[8,8,8,8,]),'expression':([0,2,11,12,21,22,39,54,57,],[9,9,23,26,37,38,52,9,9,]),'term':([0,2,11,12,19,20,21,22,29,30,31,32,33,34,39,54,57,],[13,13,13,13,35,36,13,13,44,45,46,47,48,49,13,13,13,]),'comparison':([0,2,11,12,21,22,39,54,57,],[14,14,14,14,14,14,14,14,14,]),'factor':([0,2,11,12,19,20,21,22,27,28,29,30,31,32,33,34,39,54,57,],[15,15,15,15,15,15,15,15,42,43,15,15,15,15,15,15,15,15,15,]),'block_statement':([51,56,63,],[53,61,64,]),}
 
 _lr_goto = {}
 for _k, _v in _lr_goto_items.items():
@@ -26,55 +26,39 @@ for _k, _v in _lr_goto_items.items():
        _lr_goto[_x][_k] = _y
 del _lr_goto_items
 _lr_productions = [
-  ("S' -> empty","S'",1,None,None,None),
-  ('empty -> <empty>','empty',0,'p_empty','parser.py',316),
-  ('program -> statement_list','program',1,'p_program','parser.py',321),
-  ('statement_list -> statement_list statement','statement_list',2,'p_statement_list','parser.py',326),
-  ('statement_list -> statement','statement_list',1,'p_statement_list','parser.py',327),
-  ('statement -> assignment_statement','statement',1,'p_statement','parser.py',331),
-  ('statement -> if_statement','statement',1,'p_statement','parser.py',332),
-  ('statement -> while_statement','statement',1,'p_statement','parser.py',333),
-  ('statement -> for_statement','statement',1,'p_statement','parser.py',334),
-  ('statement -> function_definition','statement',1,'p_statement','parser.py',335),
-  ('statement -> block_statement','statement',1,'p_statement','parser.py',336),
-  ('statement -> return_statement','statement',1,'p_statement','parser.py',337),
-  ('statement -> COMMENT','statement',1,'p_statement','parser.py',338),
-  ('statement -> NEWLINE','statement',1,'p_statement','parser.py',339),
-  ('assignment_statement -> ID EQUALS expression SEMICOLON','assignment_statement',4,'p_assignment_statement','parser.py',344),
-  ('function_definition -> DEF ID LPAREN parameters RPAREN COLON block_statement','function_definition',7,'p_function_definition','parser.py',350),
-  ('parameters -> parameter_list','parameters',1,'p_parameters','parser.py',357),
-  ('parameters -> empty','parameters',1,'p_parameters','parser.py',358),
-  ('parameter_list -> parameter_list COMMA ID','parameter_list',3,'p_parameter_list','parser.py',362),
-  ('parameter_list -> ID','parameter_list',1,'p_parameter_list','parser.py',363),
-  ('function_call -> ID LPAREN argument_list RPAREN','function_call',4,'p_function_call','parser.py',368),
-  ('argument_list -> expression_list','argument_list',1,'p_argument_list','parser.py',372),
-  ('argument_list -> empty','argument_list',1,'p_argument_list','parser.py',373),
-  ('return_statement -> RETURN expression SEMICOLON','return_statement',3,'p_return_statement','parser.py',378),
-  ('if_statement -> IF LPAREN expression RPAREN block_statement ELSE block_statement','if_statement',7,'p_if_statement','parser.py',383),
-  ('if_statement -> IF LPAREN expression RPAREN block_statement','if_statement',5,'p_if_statement','parser.py',384),
-  ('while_statement -> WHILE LPAREN expression RPAREN block_statement','while_statement',5,'p_while_statement','parser.py',396),
-  ('for_statement -> FOR LPAREN assignment_statement SEMICOLON expression SEMICOLON assignment_statement RPAREN block_statement','for_statement',9,'p_for_statement','parser.py',402),
-  ('block_statement -> LBRACE statement_list RBRACE','block_statement',3,'p_block_statement','parser.py',409),
-  ('block_statement -> empty','block_statement',1,'p_block_statement','parser.py',410),
-  ('expression -> expression PLUS expression','expression',3,'p_expression_binop','parser.py',420),
-  ('expression -> expression MINUS expression','expression',3,'p_expression_binop','parser.py',421),
-  ('expression -> expression TIMES expression','expression',3,'p_expression_binop','parser.py',422),
-  ('expression -> expression DIVIDE expression','expression',3,'p_expression_binop','parser.py',423),
-  ('expression -> LPAREN expression RPAREN','expression',3,'p_expression_group','parser.py',430),
-  ('expression -> NUMBER','expression',1,'p_expression_number','parser.py',435),
-  ('expression -> STRING','expression',1,'p_expression_string','parser.py',439),
-  ('expression -> ID','expression',1,'p_expression_id','parser.py',444),
-  ('expression_list -> expression','expression_list',1,'p_expression_list','parser.py',453),
-  ('expression_list -> expression COMMA expression_list','expression_list',3,'p_expression_list','parser.py',454),
-  ('variable_declaration -> TYPE ID EQUALS expression SEMICOLON','variable_declaration',5,'p_variable_declaration','parser.py',458),
-  ('variable_declaration -> TYPE ID SEMICOLON','variable_declaration',3,'p_variable_declaration','parser.py',459),
-  ('array_definition -> ID EQUALS LBRACKET element_list RBRACKET SEMICOLON','array_definition',6,'p_array_definition','parser.py',468),
-  ('element_list -> element_list COMMA expression','element_list',3,'p_element_list','parser.py',472),
-  ('element_list -> expression','element_list',1,'p_element_list','parser.py',473),
-  ('array_access -> ID LBRACKET expression RBRACKET','array_access',4,'p_array_access','parser.py',477),
-  ('class_definition -> CLASS ID LBRACE class_body RBRACE','class_definition',5,'p_class_definition','parser.py',482),
-  ('class_body -> class_member class_body','class_body',2,'p_class_body','parser.py',486),
-  ('class_body -> empty','class_body',1,'p_class_body','parser.py',487),
-  ('class_member -> function_definition','class_member',1,'p_class_member','parser.py',494),
-  ('class_member -> variable_declaration','class_member',1,'p_class_member','parser.py',495),
+  ("S' -> program","S'",1,None,None,None),
+  ('program -> statement_list','program',1,'p_program','parser.py',71),
+  ('statement_list -> statement','statement_list',1,'p_statement_list','parser.py',75),
+  ('statement_list -> statement_list statement','statement_list',2,'p_statement_list','parser.py',76),
+  ('statement -> assignment_statement','statement',1,'p_statement','parser.py',83),
+  ('statement -> if_statement','statement',1,'p_statement','parser.py',84),
+  ('statement -> while_statement','statement',1,'p_statement','parser.py',85),
+  ('statement -> for_statement','statement',1,'p_statement','parser.py',86),
+  ('statement -> return_statement','statement',1,'p_statement','parser.py',87),
+  ('statement -> expression SEMICOLON','statement',2,'p_statement','parser.py',88),
+  ('assignment_statement -> ID EQUALS expression SEMICOLON','assignment_statement',4,'p_assignment_statement','parser.py',92),
+  ('if_statement -> KEYWORD LPAREN expression RPAREN block_statement','if_statement',5,'p_if_statement','parser.py',96),
+  ('if_statement -> KEYWORD LPAREN expression RPAREN block_statement KEYWORD block_statement','if_statement',7,'p_if_statement','parser.py',97),
+  ('while_statement -> KEYWORD LPAREN expression RPAREN block_statement','while_statement',5,'p_while_statement','parser.py',104),
+  ('for_statement -> KEYWORD LPAREN assignment_statement expression SEMICOLON assignment_statement RPAREN block_statement','for_statement',8,'p_for_statement','parser.py',108),
+  ('return_statement -> KEYWORD expression SEMICOLON','return_statement',3,'p_return_statement','parser.py',112),
+  ('return_statement -> KEYWORD SEMICOLON','return_statement',2,'p_return_statement','parser.py',113),
+  ('block_statement -> LBRACE statement_list RBRACE','block_statement',3,'p_block_statement','parser.py',120),
+  ('block_statement -> LBRACE RBRACE','block_statement',2,'p_block_statement','parser.py',121),
+  ('expression -> term','expression',1,'p_expression','parser.py',125),
+  ('expression -> expression PLUS term','expression',3,'p_expression','parser.py',126),
+  ('expression -> expression MINUS term','expression',3,'p_expression','parser.py',127),
+  ('expression -> comparison','expression',1,'p_expression','parser.py',128),
+  ('comparison -> term GREATER term','comparison',3,'p_comparison','parser.py',135),
+  ('comparison -> term LESS term','comparison',3,'p_comparison','parser.py',136),
+  ('comparison -> term EQUAL_EQUAL term','comparison',3,'p_comparison','parser.py',137),
+  ('comparison -> term NOT_EQUAL term','comparison',3,'p_comparison','parser.py',138),
+  ('comparison -> term GREATER_EQUAL term','comparison',3,'p_comparison','parser.py',139),
+  ('comparison -> term LESS_EQUAL term','comparison',3,'p_comparison','parser.py',140),
+  ('term -> factor','term',1,'p_term','parser.py',144),
+  ('term -> term TIMES factor','term',3,'p_term','parser.py',145),
+  ('term -> term DIVIDE factor','term',3,'p_term','parser.py',146),
+  ('factor -> NUMBER','factor',1,'p_factor','parser.py',153),
+  ('factor -> ID','factor',1,'p_factor','parser.py',154),
+  ('factor -> LPAREN expression RPAREN','factor',3,'p_factor','parser.py',155),
 ]

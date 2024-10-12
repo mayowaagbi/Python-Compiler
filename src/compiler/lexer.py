@@ -1,4 +1,3 @@
-import re
 import keyword
 import ply.lex as lex
 from PyQt5.Qsci import QsciLexerCustom, QsciScintilla
@@ -15,7 +14,7 @@ tokens = (
     "COMMENT", "NEWLINE", "OPERATOR", 
     'AND', 'OR', 'NOT', 'RETURN', 'IF', 'ELSE', 
     'WHILE', 'FOR', 'TYPE', 'INT', 'FLOAT', 
-    "TRUE", "FALSE", "KEYWORD", 
+    "TRUE", "FALSE","KEYWORD",
     'LESS', 'GREATER_EQUAL', 'LESS_EQUAL',
     'NOT_EQUAL', 'EQUAL_EQUAL',  "COMMA", "LBRACKET", "RBRACKET", 'DEF', 'CLASS', 'NEW',
 )
@@ -60,6 +59,7 @@ t_NEW = r'new'
 # Identifier or reserved word (e.g., if, while)
 def t_ID(t):
     r'[a-zA-Z_][a-zA-Z_0-9]*'
+    print(f"Token value: {t.value}")  # Debug: Print the token value
     if t.value in keyword.kwlist:
         t.type = 'KEYWORD'
     elif t.value == "true":
@@ -68,6 +68,9 @@ def t_ID(t):
     elif t.value == "false":
         t.type = "FALSE"
         t.value = False
+    else:
+        t.type = 'ID'  # Ensure a default type is set
+    print(f"Token type: {t.type}")  # Debug: Print the token type
     return t
 
 def t_TRUE(t):
@@ -78,6 +81,10 @@ def t_TRUE(t):
 def t_FALSE(t):
     r'false'
     t.value = False
+    return t
+
+# def t_IF(t):
+    r'if'
     return t
 
 # Number (e.g., 123)
@@ -110,99 +117,99 @@ def t_error(t):
     t.lexer.skip(1)
 
 # Step 2: Build the PLY lexer
-lexer = lex.lex()
+lexer= lex.lex()
 
-# Step 3: Create your PyQt5 custom lexer (QsciLexer)
-class CombinedLexer(QsciLexerCustom):
-    """Custom lexer integrating PLY and Qsci"""
+# # Step 3: Create your PyQt5 custom lexer (QsciLexer)
+# class CombinedLexer(QsciLexerCustom):
+#     """Custom lexer integrating PLY and Qsci"""
     
-    def __init__(self, editor):
-        super(CombinedLexer, self).__init__(editor)
-        self.editor = editor
-        self.setDefaultColor(QColor("#FFFFFF"))
-        self.setDefaultPaper(QColor("#282c34"))
-        self.setDefaultFont(QFont("Consolas", 14))
+#     def __init__(self, editor):
+#         super(CombinedLexer, self).__init__(editor)
+#         self.editor = editor
+#         self.setDefaultColor(QColor("#FFFFFF"))
+#         self.setDefaultPaper(QColor("#282c34"))
+#         self.setDefaultFont(QFont("Consolas", 14))
 
-        # Token to style mappings
-        self.TOKENS_MAP = {
-            "KEYWORD": self.KEYWORD,
-            "NUMBER": self.NUMBER,
-            "STRING": self.STRING,
-            "COMMENT": self.COMMENT,
-            "ID": self.DEFAULT
-        }
+#         # Token to style mappings
+#         self.TOKENS_MAP = {
+#             "KEYWORD": self.KEYWORD,
+#             "NUMBER": self.NUMBER,
+#             "STRING": self.STRING,
+#             "COMMENT": self.COMMENT,
+#             "ID": self.DEFAULT
+#         }
         
-        self.keywords_list = keyword.kwlist
+#         self.keywords_list = keyword.kwlist
 
-    # Style definitions
-    DEFAULT = 0
-    KEYWORD = 1
-    STRING = 2
-    COMMENT = 3
-    NUMBER = 4
+#     # Style definitions
+#     DEFAULT = 0
+#     KEYWORD = 1
+#     STRING = 2
+#     COMMENT = 3
+#     NUMBER = 4
     
-    def styleText(self, start, end):
-        self.startStyling(start)
-        text = self.editor.text()[start:end]
+#     def styleText(self, start, end):
+#         self.startStyling(start)
+#         text = self.editor.text()[start:end]
         
-        # Tokenize using PLY lexer
-        lexer.input(text)
-        while True:
-            tok = lexer.token()
-            if not tok:
-                break
+#         # Tokenize using PLY lexer
+#         lexer.input(text)
+#         while True:
+#             tok = lexer.token()
+#             if not tok:
+#                 break
             
-            tok_type = tok.type
-            tok_value = tok.value
+#             tok_type = tok.type
+#             tok_value = tok.value
             
-            # Determine the length based on the type of token value
-            if isinstance(tok_value, str):
-                tok_len = len(tok_value)
-            else:
-                # If it's not a string, set tok_len to 1 for single character tokens
-                tok_len = 1
+#             # Determine the length based on the type of token value
+#             if isinstance(tok_value, str):
+#                 tok_len = len(tok_value)
+#             else:
+#                 # If it's not a string, set tok_len to 1 for single character tokens
+#                 tok_len = 1
             
-            # Apply styling based on token type
-            style = self.TOKENS_MAP.get(tok_type, self.DEFAULT)
-            self.setStyling(tok_len, style)
+#             # Apply styling based on token type
+#             style = self.TOKENS_MAP.get(tok_type, self.DEFAULT)
+#             self.setStyling(tok_len, style)
             
-            # Print token type and value for analysis
-            print(f'Type: {tok.type}, Value: {tok.value}')
+#             # Print token type and value for analysis
+#             print(f'Type: {tok.type}, Value: {tok.value}')
         
-    def description(self, style):
-        if style == self.DEFAULT:
-            return "Default"
-        elif style == self.KEYWORD:
-            return "Keyword"
-        elif style == self.STRING:
-            return "String"
-        elif style == self.COMMENT:
-            return "Comment"
-        elif style == self.NUMBER:
-            return "Number"
-        return ""
+#     def description(self, style):
+#         if style == self.DEFAULT:
+#             return "Default"
+#         elif style == self.KEYWORD:
+#             return "Keyword"
+#         elif style == self.STRING:
+#             return "String"
+#         elif style == self.COMMENT:
+#             return "Comment"
+#         elif style == self.NUMBER:
+#             return "Number"
+#         return ""
 
-# Step 4: Use the combined lexer in your PyQt5 editor
-class CodeEditor(QMainWindow):
-    def __init__(self):
-        super().__init__()
-        self.editor = QsciScintilla()
-        self.setCentralWidget(self.editor)
-        self.lexer = CombinedLexer(self.editor)
-        self.editor.setLexer(self.lexer)
-        self.editor.setText( """
-x = 5;
-if (x > 3) {
-    y = 10;
-} else {
-    y = 0;
-}
-""")
-        self.setWindowTitle("Lexer Test")
-        self.resize(800, 600)
-        self.show()
+# # Step 4: Use the combined lexer in your PyQt5 editor
+# class CodeEditor(QMainWindow):
+#     def __init__(self):
+#         super().__init__()
+#         self.editor = QsciScintilla()
+#         self.setCentralWidget(self.editor)
+#         self.lexer = CombinedLexer(self.editor)
+#         self.editor.setLexer(self.lexer)
+#         self.editor.setText( """
+# x = 5;
+# if (x > 3) {
+#     y = 10;
+# } else {
+#     y = 0;
+# }
+# """)
+#         self.setWindowTitle("Lexer Test")
+#         self.resize(800, 600)
+#         self.show()
 
-if __name__ == "__main__":
-    app = QApplication([])
-    window = CodeEditor()
-    app.exec_()
+# if __name__ == "__main__":
+#     app = QApplication([])
+#     window = CodeEditor()
+#     app.exec_()
