@@ -20,12 +20,18 @@ def main():
     for token in lexer:
         print(token)
 
-    # Step 2: Parse the input directly, no need to manually pass tokens
+    # Step 2: Parse the input
     result = parser.parse(test_input, lexer=lexer)
 
     # Output the result of parsing
     print("\nResult of parsing:")
     print(result.pretty_print())
+
+    # Step 3: Generate and print TAC
+    tac_list = result.generate_tac()
+    print("\nGenerated Three-Address Code (TAC):")
+    for tac in tac_list:
+        print(tac)
 
 if __name__ == "__main__":
     main()
