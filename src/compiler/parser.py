@@ -32,6 +32,17 @@ class ProgramNode(ASTNode):
             tac_code.extend(statement.generate_tac())
         return tac_code
 
+class BlockNode(ASTNode):
+    def __init__(self, children):
+        super().__init__('block', children)
+
+    def generate_tac(self):
+        tac_code = []
+        print(f"Generating TAC for block with {len(self.children)} statements.")
+        for statement in self.children:
+            tac_code.extend(statement.generate_tac())
+        return tac_code
+
 class AssignmentNode(ASTNode):
     def __init__(self, var_name, value):
         super().__init__('assignment', [IdentifierNode(var_name), value])
@@ -39,6 +50,7 @@ class AssignmentNode(ASTNode):
     def generate_tac(self):
         var_name = self.children[0].value
         value = self.children[1].generate_tac()[0]
+        print(f"Generating TAC for assignment: {var_name} = {value}")
         return [f"{var_name} = {value}"]
 
 class IfStatementNode(ASTNode):
@@ -48,16 +60,26 @@ class IfStatementNode(ASTNode):
     def generate_tac(self):
         condition = self.children[0].generate_tac()[0]
         true_block = self.children[1]
-        false_block = self.children[2] if len(self.children) > 2 else None
-        tac_code = [f"if {condition} goto L1"]
-        tac_code.extend(true_block.generate_tac())
+        false_block = self.children[2] if self.children[2] is not None else None
+        true_label = new_label()
+        end_label = new_label()
+        tac_code = [f"if {condition} goto {true_label}"]
         if false_block:
-            tac_code.append("goto L2")
-            tac_code.append("L1:")
+            false_label = new_label()
+            tac_code.append(f"goto {false_label}")
+            tac_code.append(f"{true_label}:")
+            tac_code.extend(true_block.generate_tac())
+            tac_code.append(f"goto {end_label}")
+            tac_code.append(f"{false_label}:")
             tac_code.extend(false_block.generate_tac())
-            tac_code.append("L2:")
         else:
-            tac_code.append("L1:")
+            tac_code.append(f"goto {end_label}")
+            tac_code.append(f"{true_label}:")
+            tac_code.extend(true_block.generate_tac())
+        tac_code.append(f"{end_label}:")
+        print("TAC for if-statement:")
+        for line in tac_code:
+            print(line)
         return tac_code
 
 class NumberNode(ASTNode):
@@ -65,6 +87,7 @@ class NumberNode(ASTNode):
         super().__init__('number', value=value)
 
     def generate_tac(self):
+        print(f"Generating TAC for number: {self.value}")
         return [str(self.value)]
 
 class IdentifierNode(ASTNode):
@@ -72,6 +95,7 @@ class IdentifierNode(ASTNode):
         super().__init__('identifier', value=value)
 
     def generate_tac(self):
+        print(f"Generating TAC for identifier: {self.value}")
         return [self.value]
 
 class BinaryOpNode(ASTNode):
@@ -82,6 +106,7 @@ class BinaryOpNode(ASTNode):
         left_result = self.children[0].generate_tac()[0]
         right_result = self.children[1].generate_tac()[0]
         temp_var = new_temp()
+        print(f"Generating TAC for binary operation: {temp_var} = {left_result} {self.value} {right_result}")
         return [f"{temp_var} = {left_result} {self.value} {right_result}"]
 
 class ComparisonNode(ASTNode):
@@ -92,6 +117,7 @@ class ComparisonNode(ASTNode):
         left_result = self.children[0].generate_tac()[0]
         right_result = self.children[1].generate_tac()[0]
         temp_var = new_temp()
+        print(f"Generating TAC for comparison: {temp_var} = {left_result} {self.value} {right_result}")
         return [f"{temp_var} = {left_result} {self.value} {right_result}"]
 
 # TAC generation helpers
@@ -101,11 +127,13 @@ label_counter = 0
 def new_temp():
     global temp_counter
     temp_counter += 1
+    print(f"Generated new temporary variable: t{temp_counter}")
     return f't{temp_counter}'
 
 def new_label():
     global label_counter
     label_counter += 1
+    print(f"Generated new label: L{label_counter}")
     return f"L{label_counter}"
 
 # Parsing rules
@@ -141,7 +169,10 @@ def p_if_statement(p):
 def p_block_statement(p):
     '''block_statement : LBRACE statement_list RBRACE
                        | LBRACE RBRACE'''
-    p[0] = ProgramNode(p[2] if len(p) == 3 else [])
+    if len(p) == 4:  # Non-empty block
+        p[0] = BlockNode(p[2])
+    else:  # Empty block
+        p[0] = BlockNode([])
 
 def p_expression(p):
     '''expression : term
