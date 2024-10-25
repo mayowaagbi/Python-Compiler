@@ -1,8 +1,10 @@
 from lexer import lexer  # Lexer from your lexer file
 from parser import parser  # Parser from your parser file
+from optimizations import dead_code_elimination  # Import dead code elimination
+from llvm_ir_generator import LLVMGenerator  # Import LLVM IR generation function
 
 def main():
-    # Example input that will be lexed and parsed
+    # Example input to be lexed, parsed, and processed
     test_input = """
     x = 5;
     if (x > 3) {
@@ -27,11 +29,25 @@ def main():
     print("\nResult of parsing:")
     print(result.pretty_print())
 
-    # Step 3: Generate and print TAC
-    tac_list = result.generate_tac()
-    print("\nGenerated Three-Address Code (TAC):")
-    for tac in tac_list:
-        print(tac)
+    # Step 3: Apply constant folding optimization on the AST
+    optimized_ast = result.constant_folding()
+
+    # Output the optimized AST
+    # print("\nOptimized AST after constant folding:")
+    # print(optimized_ast.pretty_print())
+
+    # # Step 4: Apply dead code elimination on the optimized AST if necessary
+    # dead_code_eliminated_ast = dead_code_elimination(optimized_ast)
+
+    # # Output the AST after dead code elimination
+    # print("\nAST after dead code elimination:")
+    # print(dead_code_eliminated_ast.pretty_print())
+
+    # Step 5: Generate and print LLVM IR
+    generate_llvm_ir = LLVMGenerator()
+    llvm_ir = generate_llvm_ir.generate_code(optimized_ast)
+    print("\nGenerated LLVM IR:")
+    print(llvm_ir)
 
 if __name__ == "__main__":
     main()
