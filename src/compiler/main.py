@@ -2,6 +2,9 @@ from lexer import lexer  # Lexer from your lexer file
 from parser import parser  # Parser from your parser file
 from optimizations import dead_code_elimination  # Import dead code elimination
 from llvm_ir_generator import LLVMGenerator  # Import LLVM IR generation function
+from llvmlite import binding  # For LLVM IR verification
+from llvm_executor import execute_llvm_ir  # Import the LLVM execution function
+
 
 def main():
     # Example input to be lexed, parsed, and processed
@@ -32,22 +35,29 @@ def main():
     # Step 3: Apply constant folding optimization on the AST
     optimized_ast = result.constant_folding()
 
-    # Output the optimized AST
-    # print("\nOptimized AST after constant folding:")
-    # print(optimized_ast.pretty_print())
-
-    # # Step 4: Apply dead code elimination on the optimized AST if necessary
-    # dead_code_eliminated_ast = dead_code_elimination(optimized_ast)
-
-    # # Output the AST after dead code elimination
-    # print("\nAST after dead code elimination:")
-    # print(dead_code_eliminated_ast.pretty_print())
-
-    # Step 5: Generate and print LLVM IR
+    # Step 4: Generate and print LLVM IR
     generate_llvm_ir = LLVMGenerator()
     llvm_ir = generate_llvm_ir.generate_code(optimized_ast)
     print("\nGenerated LLVM IR:")
     print(llvm_ir)
+
+    # Step 5: Verify the generated LLVM IR
+    binding.initialize()
+    binding.initialize_native_target()
+    binding.initialize_native_asmprinter()
+
+    llvm_module = binding.parse_assembly(llvm_ir)
+    try:
+        llvm_module.verify()
+        print("\nLLVM IR Verified Successfully.")
+    except binding.LLVMException as e:
+        print("\nLLVM IR Verification Failed:")
+        print(e)
+        return  # Exit if verification fails
+
+    # Step 6: Execute the generated LLVM IR
+    execute_llvm_ir(llvm_ir)
+
 
 if __name__ == "__main__":
     main()

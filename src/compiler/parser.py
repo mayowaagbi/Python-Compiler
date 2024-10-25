@@ -153,7 +153,7 @@ def p_term(p):
     if len(p) == 2:
         p[0] = p[1]
     else:
-        p[0] = BinaryOpNode(p[1], p[2], p[3])
+        p[0] = BinaryOpNode(p[1], p[2], p[3])``
 
 def p_factor(p):
     '''factor : NUMBER

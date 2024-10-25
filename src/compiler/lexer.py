@@ -14,7 +14,7 @@ tokens = (
     "COMMENT", "NEWLINE", "OPERATOR", 
      'TYPE', 'INT', 'FLOAT',
     'LESS', 'GREATER_EQUAL', 'LESS_EQUAL',
-    'NOT_EQUAL', 'EQUAL_EQUAL',  "COMMA", "LBRACKET", "RBRACKET", 'DEF', 'CLASS', 'NEW',
+    'NOT_EQUAL', 'EQUAL_EQUAL',  "COMMA", "LBRACKET", "RBRACKET", 'DEF', 'CLASS', 'NEW','PRINT',
 )
 # Define keywords
 keywords = {
@@ -68,6 +68,8 @@ t_RBRACKET = r'\]'
 t_DEF = r'def'
 t_CLASS = r'class'
 t_NEW = r'new'
+t_PRINT = r'print'
+
 
 
 # Identifier or reserved word (e.g., if, while)

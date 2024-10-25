@@ -6,7 +6,7 @@ _tabversion = '3.10'
 
 _lr_method = 'LALR'
 
-_lr_signature = 'AND CLASS COLON COMMA COMMENT DEF DIVIDE ELSE EQUALS EQUAL_EQUAL FALSE FLOAT FOR GREATER GREATER_EQUAL ID IF INT LBRACE LBRACKET LESS LESS_EQUAL LPAREN MINUS NEW NEWLINE NOT NOT_EQUAL NUMBER OPERATOR OR PLUS RBRACE RBRACKET RETURN RPAREN SEMICOLON STRING TIMES TRUE TYPE WHILEprogram : statement_liststatement_list : statement\n                      | statement_list statementstatement : assignment_statement\n                 | if_statementassignment_statement : ID EQUALS expression SEMICOLONif_statement : IF LPAREN expression RPAREN block_statement\n                    | IF LPAREN expression RPAREN block_statement ELSE block_statementblock_statement : LBRACE statement_list RBRACE\n                       | LBRACE RBRACEexpression : term\n                  | expression PLUS term\n                  | expression MINUS term\n                  | comparisoncomparison : term GREATER term\n                  | term LESS term\n                  | term EQUAL_EQUAL term\n                  | term NOT_EQUAL term\n                  | term GREATER_EQUAL term\n                  | term LESS_EQUAL termterm : factor\n            | term TIMES factor\n            | term DIVIDE factorfactor : NUMBER\n              | ID\n              | LPAREN expression RPAREN'
+_lr_signature = 'AND CLASS COLON COMMA COMMENT DEF DIVIDE ELSE EQUALS EQUAL_EQUAL FALSE FLOAT FOR GREATER GREATER_EQUAL ID IF INT LBRACE LBRACKET LESS LESS_EQUAL LPAREN MINUS NEW NEWLINE NOT NOT_EQUAL NUMBER OPERATOR OR PLUS PRINT RBRACE RBRACKET RETURN RPAREN SEMICOLON STRING TIMES TRUE TYPE WHILEprogram : statement_liststatement_list : statement\n                      | statement_list statementstatement : assignment_statement\n                 | if_statementassignment_statement : ID EQUALS expression SEMICOLONif_statement : IF LPAREN expression RPAREN block_statement\n                    | IF LPAREN expression RPAREN block_statement ELSE block_statementblock_statement : LBRACE statement_list RBRACE\n                       | LBRACE RBRACEexpression : term\n                  | expression PLUS term\n                  | expression MINUS term\n                  | comparisoncomparison : term GREATER term\n                  | term LESS term\n                  | term EQUAL_EQUAL term\n                  | term NOT_EQUAL term\n                  | term GREATER_EQUAL term\n                  | term LESS_EQUAL termterm : factor\n            | term TIMES factor\n            | term DIVIDE factorfactor : NUMBER\n              | ID\n              | LPAREN expression RPAREN'
     
 _lr_action_items = {'ID':([0,2,3,4,5,8,9,10,17,19,20,21,22,23,24,25,26,27,28,29,43,44,46,47,48,49,],[6,6,-2,-4,-5,-3,11,11,11,-6,11,11,11,11,11,11,11,11,11,11,-7,6,6,-10,-8,-9,]),'IF':([0,2,3,4,5,8,19,43,44,46,47,48,49,],[7,7,-2,-4,-5,-3,-6,-7,7,7,-10,-8,-9,]),'$end':([1,2,3,4,5,8,19,43,47,48,49,],[0,-1,-2,-4,-5,-3,-6,-7,-10,-8,-9,]),'RBRACE':([3,4,5,8,19,43,44,46,47,48,49,],[-2,-4,-5,-3,-6,-7,47,49,-10,-8,-9,]),'EQUALS':([6,],[9,]),'LPAREN':([7,9,10,17,20,21,22,23,24,25,26,27,28,29,],[10,17,17,17,17,17,17,17,17,17,17,17,17,17,]),'NUMBER':([9,10,17,20,21,22,23,24,25,26,27,28,29,],[16,16,16,16,16,16,16,16,16,16,16,16,16,]),'TIMES':([11,13,15,16,32,33,34,35,36,37,38,39,40,41,42,],[-25,22,-21,-24,22,22,-22,-23,22,22,22,22,22,22,-26,]),'DIVIDE':([11,13,15,16,32,33,34,35,36,37,38,39,40,41,42,],[-25,23,-21,-24,23,23,-22,-23,23,23,23,23,23,23,-26,]),'GREATER':([11,13,15,16,34,35,42,],[-25,24,-21,-24,-22,-23,-26,]),'LESS':([11,13,15,16,34,35,42,],[-25,25,-21,-24,-22,-23,-26,]),'EQUAL_EQUAL':([11,13,15,16,34,35,42,],[-25,26,-21,-24,-22,-23,-26,]),'NOT_EQUAL':([11,13,15,16,34,35,42,],[-25,27,-21,-24,-22,-23,-26,]),'GREATER_EQUAL':([11,13,15,16,34,35,42,],[-25,28,-21,-24,-22,-23,-26,]),'LESS_EQUAL':([11,13,15,16,34,35,42,],[-25,29,-21,-24,-22,-23,-26,]),'SEMICOLON':([11,12,13,14,15,16,32,33,34,35,36,37,38,39,40,41,42,],[-25,19,-11,-14,-21,-24,-12,-13,-22,-23,-15,-16,-17,-18,-19,-20,-26,]),'PLUS':([11,12,13,14,15,16,18,30,32,33,34,35,36,37,38,39,40,41,42,],[-25,20,-11,-14,-21,-24,20,20,-12,-13,-22,-23,-15,-16,-17,-18,-19,-20,-26,]),'MINUS':([11,12,13,14,15,16,18,30,32,33,34,35,36,37,38,39,40,41,42,],[-25,21,-11,-14,-21,-24,21,21,-12,-13,-22,-23,-15,-16,-17,-18,-19,-20,-26,]),'RPAREN':([11,13,14,15,16,18,30,32,33,34,35,36,37,38,39,40,41,42,],[-25,-11,-14,-21,-24,31,42,-12,-13,-22,-23,-15,-16,-17,-18,-19,-20,-26,]),'LBRACE':([31,45,],[44,44,]),'ELSE':([43,47,49,],[45,-10,-9,]),}
 
@@ -27,30 +27,30 @@ for _k, _v in _lr_goto_items.items():
 del _lr_goto_items
 _lr_productions = [
   ("S' -> program","S'",1,None,None,None),
-  ('program -> statement_list','program',1,'p_program','parser.py',177),
-  ('statement_list -> statement','statement_list',1,'p_statement_list','parser.py',181),
-  ('statement_list -> statement_list statement','statement_list',2,'p_statement_list','parser.py',182),
-  ('statement -> assignment_statement','statement',1,'p_statement','parser.py',189),
-  ('statement -> if_statement','statement',1,'p_statement','parser.py',190),
-  ('assignment_statement -> ID EQUALS expression SEMICOLON','assignment_statement',4,'p_assignment_statement','parser.py',194),
-  ('if_statement -> IF LPAREN expression RPAREN block_statement','if_statement',5,'p_if_statement','parser.py',198),
-  ('if_statement -> IF LPAREN expression RPAREN block_statement ELSE block_statement','if_statement',7,'p_if_statement','parser.py',199),
-  ('block_statement -> LBRACE statement_list RBRACE','block_statement',3,'p_block_statement','parser.py',206),
-  ('block_statement -> LBRACE RBRACE','block_statement',2,'p_block_statement','parser.py',207),
-  ('expression -> term','expression',1,'p_expression','parser.py',211),
-  ('expression -> expression PLUS term','expression',3,'p_expression','parser.py',212),
-  ('expression -> expression MINUS term','expression',3,'p_expression','parser.py',213),
-  ('expression -> comparison','expression',1,'p_expression','parser.py',214),
-  ('comparison -> term GREATER term','comparison',3,'p_comparison','parser.py',221),
-  ('comparison -> term LESS term','comparison',3,'p_comparison','parser.py',222),
-  ('comparison -> term EQUAL_EQUAL term','comparison',3,'p_comparison','parser.py',223),
-  ('comparison -> term NOT_EQUAL term','comparison',3,'p_comparison','parser.py',224),
-  ('comparison -> term GREATER_EQUAL term','comparison',3,'p_comparison','parser.py',225),
-  ('comparison -> term LESS_EQUAL term','comparison',3,'p_comparison','parser.py',226),
-  ('term -> factor','term',1,'p_term','parser.py',230),
-  ('term -> term TIMES factor','term',3,'p_term','parser.py',231),
-  ('term -> term DIVIDE factor','term',3,'p_term','parser.py',232),
-  ('factor -> NUMBER','factor',1,'p_factor','parser.py',239),
-  ('factor -> ID','factor',1,'p_factor','parser.py',240),
-  ('factor -> LPAREN expression RPAREN','factor',3,'p_factor','parser.py',241),
+  ('program -> statement_list','program',1,'p_program','parser.py',94),
+  ('statement_list -> statement','statement_list',1,'p_statement_list','parser.py',98),
+  ('statement_list -> statement_list statement','statement_list',2,'p_statement_list','parser.py',99),
+  ('statement -> assignment_statement','statement',1,'p_statement','parser.py',106),
+  ('statement -> if_statement','statement',1,'p_statement','parser.py',107),
+  ('assignment_statement -> ID EQUALS expression SEMICOLON','assignment_statement',4,'p_assignment_statement','parser.py',111),
+  ('if_statement -> IF LPAREN expression RPAREN block_statement','if_statement',5,'p_if_statement','parser.py',115),
+  ('if_statement -> IF LPAREN expression RPAREN block_statement ELSE block_statement','if_statement',7,'p_if_statement','parser.py',116),
+  ('block_statement -> LBRACE statement_list RBRACE','block_statement',3,'p_block_statement','parser.py',123),
+  ('block_statement -> LBRACE RBRACE','block_statement',2,'p_block_statement','parser.py',124),
+  ('expression -> term','expression',1,'p_expression','parser.py',131),
+  ('expression -> expression PLUS term','expression',3,'p_expression','parser.py',132),
+  ('expression -> expression MINUS term','expression',3,'p_expression','parser.py',133),
+  ('expression -> comparison','expression',1,'p_expression','parser.py',134),
+  ('comparison -> term GREATER term','comparison',3,'p_comparison','parser.py',141),
+  ('comparison -> term LESS term','comparison',3,'p_comparison','parser.py',142),
+  ('comparison -> term EQUAL_EQUAL term','comparison',3,'p_comparison','parser.py',143),
+  ('comparison -> term NOT_EQUAL term','comparison',3,'p_comparison','parser.py',144),
+  ('comparison -> term GREATER_EQUAL term','comparison',3,'p_comparison','parser.py',145),
+  ('comparison -> term LESS_EQUAL term','comparison',3,'p_comparison','parser.py',146),
+  ('term -> factor','term',1,'p_term','parser.py',150),
+  ('term -> term TIMES factor','term',3,'p_term','parser.py',151),
+  ('term -> term DIVIDE factor','term',3,'p_term','parser.py',152),
+  ('factor -> NUMBER','factor',1,'p_factor','parser.py',159),
+  ('factor -> ID','factor',1,'p_factor','parser.py',160),
+  ('factor -> LPAREN expression RPAREN','factor',3,'p_factor','parser.py',161),
 ]

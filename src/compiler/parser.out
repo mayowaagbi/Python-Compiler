@@ -18,6 +18,7 @@ Unused terminals:
     NOT
     OPERATOR
     OR
+    PRINT
     RBRACKET
     RETURN
     STRING
@@ -89,6 +90,7 @@ NUMBER               : 24
 OPERATOR             : 
 OR                   : 
 PLUS                 : 12
+PRINT                : 
 RBRACE               : 9 10
 RBRACKET             : 
 RETURN               : 
